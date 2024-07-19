@@ -5,17 +5,6 @@ This project is used for Azure CycleCloud integrated with Thinlinc to allow thin
 Please reference the [CycleCloud Projects page](https://docs.microsoft.com/en-us/azure/cyclecloud/projects) dives into
 greater detail on the concepts and examples.
 
-## Goals
-
-In this lab you will learn how to:
-
-* Use CycleCloud Projects for installing a custom application in a cluster.
-* Stage application installation files in the blobs directory of a project.
-* Write a script that is executed on each and every cluster node as it boots.
-* Stage configuration files into every cluster node.
-* Upload a CycleCloud Project into a storage locker.
-* Start a new cluster that uses the new project.
-
 ## A quick step-to-step guides to use this project
 
 ### 1.1 pre-requisites
