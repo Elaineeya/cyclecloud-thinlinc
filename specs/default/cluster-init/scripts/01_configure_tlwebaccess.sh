@@ -11,12 +11,6 @@ else
   exit 1
 fi
 
-# Update the listen_port value from default 300 to 443
-if ! sed -i 's/^listen_port=300$/listen_port=443/' "$CONFIG_FILE"; then
-    echo "Failed to update listen_port in the configuration file."
-    exit 1
-fi
-
 echo "listen_port updated successfully."
 
 # Restart the tlwebaccess service

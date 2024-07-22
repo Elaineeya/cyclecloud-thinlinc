@@ -10,7 +10,7 @@ greater detail on the concepts and examples.
 ### 1.1 pre-requisites
 
 * have a valid Azure subscription and a service principal ready
-* have a valid Azure CycleCloud installed()
+* have a valid Azure CycleCloud installed
 
 ### 1.2 Uploading this Thinlinc CycleCloud project into the storage locker
 
