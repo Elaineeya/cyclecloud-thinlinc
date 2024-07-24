@@ -1,0 +1,175 @@
+
+################################
+## Cluster Configuration File ##
+################################
+
+[cluster single-nodearray]
+IconUrl = static/cloud/cluster/ui/ClusterIcon/microsoft.png
+FormLayout = selectionpanel
+Category = Infrastructure
+
+    [[node defaults]]
+    UsePublicNetwork = $UsePublicNetwork
+    Credentials = $Credentials    
+    ImageName = $ImageName
+    SubnetId = $SubnetId
+    Region = $Region
+    KeyPairLocation = ~/.ssh/cyclecloud.pem
+    Azure.Identities = $ManagedServiceIdentity
+
+        [[[volume boot]]]
+        Size = ${ifThenElse(DefaultBootDiskSize > 0, DefaultBootDiskSize, undefined)}
+        SSD = True
+    
+    [[node my-tl]]
+    MachineType = $MachineType
+    
+
+        [[[input-endpoint my-endpoint]]]
+        PublicPort = 22
+        PrivatePort = 22
+        Protocol = tcp
+
+        [[[input-endpoint MyWebPort]]]
+        PrivatePort = 443
+        PublicPort = 443
+        Protocol = tcp
+
+        [[[configuration]]]
+        thinlinc.enable_web = $EnableWeb
+        thinlinc.web_port = $WebPort
+        thinlinc.connection_mode = $ConnectionMode
+
+        [[[cluster-init cyclecloud-thinlinc:default:1.0.1]]]
+
+    [[nodearray login]]
+    MachineType = $MachineType
+    AdditionalClusterInitSpecs = $ClusterInitSpecs
+    
+        [[[network-interface eth0]]]
+        AssociatePublicIpAddress = $UsePublicNetwork
+
+[parameters About]
+Order = 1
+
+    [[parameters About]]
+
+        [[[parameter single-nodearray]]]
+        HideLabel = true
+        Config.Plugin = pico.widget.HtmlTemplateWidget
+        Config.Template := "<p>The Single Node Array cluster type is just a singular manual scaling VM meant for development and testing of cluster-init projects as well as a starting point for other applications. </p>"
+
+[parameters Required Settings]
+Order = 10
+
+    [[parameters Virtual Machines]]
+    Description = "Configure which VM type to use based on the requirements of your application."
+    Order = 20
+
+        [[[parameter Region]]]
+        Label = Region
+        Description = Deployment Location
+        ParameterType = Cloud.Region
+
+        [[[parameter MachineType]]]
+        Label = VM Type
+        Description = The VM type for nodes
+        ParameterType = Cloud.MachineType
+        DefaultValue = Standard_D4ads_v5
+
+    [[parameters Networking]]
+    Order = 40
+
+        [[[parameter SubnetId]]]
+        Label = Subnet ID
+        Description = Subnet Resource Path (ResourceGroup/VirtualNetwork/Subnet)
+        ParameterType = Azure.Subnet
+        Required = True
+
+
+[parameters Advanced Settings]
+Order = 20
+
+    [[parameters Azure Settings]]
+    Order = 10 
+
+        [[[parameter Credentials]]]
+        Description = The credentials for the cloud provider
+        ParameterType = Cloud.Credentials        
+
+        [[[parameter ManagedServiceIdentity]]]
+        Label = Managed Id
+        Description = Optionally assign an Azure user assigned managed identity to access Azure resources using assigned roles.
+        ParameterType = Azure.ManagedIdentity
+        DefaultValue = =undefined
+
+        [[[parameter ConfigureBootDiskSizes]]]
+        Label = Custom OS Disk Size
+        Description = Set specific OS/boot disk sizes for cluster nodes.
+        DefaultValue = false
+        ParameterType = Boolean
+
+        [[[parameter DefaultBootDiskSize]]]
+        Description = Optional: Size of the OS/boot disk in GB for all nodes in the cluster (leave at 0 to use Image size)
+        ParameterType = Integer
+        Config.Plugin = pico.form.NumberTextBox
+        # Config.Plugin = pico.form.NumberSlider
+        Config.MinValue = 0
+        Config.MaxValue = 32,000
+        Config.IntegerOnly = true
+        Config.Increment = 64
+        DefaultValue = 0
+        Conditions.Hidden := ConfigureBootDiskSizes isnt true
+
+
+    [[parameters Software]]
+    Description = "Specify the base OS installed on all nodes, and optionally the cluster-init and chef versions from your Locker."
+    Order = 10
+
+        [[[parameter ImageName]]]
+        Label = Base OS
+        ParameterType = Cloud.Image
+        DefaultValue = cycle.image.ubuntu22
+
+        [[[parameter ClusterInitSpecs]]]
+        Label = Cluster-Init
+        DefaultValue = =undefined
+        Description = Cluster init specs to apply to the node
+        ParameterType = Cloud.ClusterInitSpecs	
+
+    [[parameters Thinlinc]]
+        [[[parameter EnableWeb]]]
+        Label = Enable Web Interface
+        DefaultValue = false
+        ParameterType = Boolean
+        Config.Label = Enable HTML Remote Desktop 
+
+        [[[parameter WebPort]]]
+        Label = Web Port
+        Description = Web Port to connect to the Web Interface²
+        DefaultValue = 443
+        ParameterType = Integer
+        Conditions.Excluded := EnableWeb isnt true
+
+        [[[parameter ConnectionMode]]]
+        Label = Connection mode from the client
+        ParameterType = StringList
+        Config.Label = The connection mode from the client
+        Config.Plugin = pico.form.Dropdown
+        Config.Entries := {[Label="Private IP"; Value="private_ip"], [Label="Public IP"; Value="public_ip"], [Label="SSH Tunnel"; Value="ssh_tunnel"]}
+        DefaultValue = private_ip
+
+    [[parameters Advanced Networking]]
+    Description = Advanced networking settings
+
+        [[[parameter ReturnProxy]]]
+        Label = Return Proxy
+        DefaultValue = true
+        ParameterType = Boolean
+        Config.Label = Use SSH tunnel to connect to CycleCloud (required if direct access is blocked)
+
+        [[[parameter UsePublicNetwork]]]
+        Label = Public Node
+        DefaultValue = true
+        ParameterType = Boolean
+        Config.Label = Access node from the Internet
