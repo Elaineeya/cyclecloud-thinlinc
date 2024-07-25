@@ -1,0 +1,14 @@
+{
+  "UsePublicNetwork" : true,
+  "ReturnProxy" : true,
+  "ConfigureBootDiskSizes" : false,
+  "single-vm" : null,
+  "Credentials" : "cendio-elaine-ansible",
+  "SubnetId" : "Xuan/cendio-cc-vnet/default",
+  "ManagedServiceIdentity" : null,
+  "Region" : "swedencentral",
+  "DefaultBootDiskSize" : 0,
+  "AdditionalClusterInitSpecs" : "cyclecloud-thinlinc:default:1.0.1",
+  "ImageName" : "/subscriptions/acedd2d6-e69d-4b5c-baf4-d382f464bb65/resourceGroups/Xuan/providers/Microsoft.Compute/images/xuan.cendio.com",
+  "MachineType" : "Standard_D2s_v3"
+}
