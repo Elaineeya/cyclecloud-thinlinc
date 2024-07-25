@@ -32,7 +32,7 @@ else
 fi
 
 # Restart the vsmagent service to apply changes
-systemctl restart vsmagent;
+systemctl restart vsmagent
 if [[ $? -ne 0 ]]; then
   echo "Failed to restart Thinlinc vsmagent service"
   exit 1

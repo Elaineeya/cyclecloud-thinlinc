@@ -152,7 +152,7 @@ Order = 20
         Conditions.Excluded := EnableWeb isnt true
 
         [[[parameter ConnectionMode]]]
-        Label = Connection mode from the client
+        Label = Connection Mode
         ParameterType = StringList
         Config.Label = The connection mode from the client
         Config.Plugin = pico.form.Dropdown

@@ -1,6 +1,8 @@
 # Thinlinc CycleCloud Project
 
-This project is used for Azure CycleCloud integrated with Thinlinc to allow thinlinc work smoothly on Cyclecloud cluster nodes.
+ThinLinc is a powerful remote desktop server solution for Linux environments, offering seamless access to applications from various clients with robust security and high performance. See the [ThinLinc site](https://www.cendio.com/) and [documentation](https://www.cendio.com/thinlinc/docs/) for an overview and detailed information.
+
+This project integrates Azure CycleCloud with ThinLinc to ensure seamless operation of ThinLinc on CycleCloud cluster nodes. 
 
 Please reference the [CycleCloud Projects page](https://docs.microsoft.com/en-us/azure/cyclecloud/projects) dives into
 greater detail on the concepts and examples.
@@ -86,7 +88,39 @@ Prepare the credentials to access the blob container associated with the locker:
 
 Having uploaded the Thinlinc project into the CycleCloud locker, you can now create a new cluster in CycleCloud and specify that each node should use the `cyclecloud-thinlinc:default` spec. 
 
-* From the Cluster page of your Azure CycleCloud web portal, navigate to the *Advanced Settings* section. Under the *Software* section, click on the "Browse" button which will open a file selector dialog, You will see a folder named `cyclecloud-thinlinc/`. Open it by double-clicking it. Then open the `1.0.0/` folder. Finally, select the `default/` folder by clicking on it once and pressing the "Select" button on the bottom of the dialog window. After pressing "Select" the file selector dialog will close. This selects the `default` spec of version `1.0.0` of the project `cyclecloud-thinlinc`.
-  ![Browse Specs](images/cluster-init.png)
+* Import cluster template by referencing the sample template located at /templates/single-nodearray_template_1.0.0.3.txt. Make the necessary adjustments accordingly.
 
-* Save the cluster and start it. When the master node turns green, log into it and verify that Thinlinc web interface configured correctly.
+  ```sh
+    (venv) xuan@dhcp-130:~/cyclecloud-thinlinc$ cyclecloud import_template single-nodearray -f ./templates/single-nodearray_template_1.0.0.3.txt
+    Importing template single-nodearray....
+    -----------------------------
+    single-nodearray : *template*
+    -----------------------------
+    Resource group: 
+    Cluster nodes:
+        my-tl: Off -- --  
+    Total nodes: 1
+    (venv) xuan@dhcp-130:~/cyclecloud-thinlinc$
+  ```
+
+
+* From the Cluster page of your Azure CycleCloud web portal, use the "+" symbol in the bottom-left-hand corner of the page to add a new cluster, select "single-nodearray" template created in the last step:
+  ![Browse Specs](images/cluster-template.png)
+
+
+* Input the cluster name and complete the other required fields. 
+
+* Navigate to the *Advanced Settings* section. Under the *Software* section, click on the "Browse" button for "Cluster-Init" which will open a file selector dialog, You will see a folder named `cyclecloud-thinlinc/`. Open it by double-clicking it. Then open the `1.0.0/` folder. Finally, select the `default/` folder by clicking on it once and pressing the "Select" button on the bottom of the dialog window. After pressing "Select" the file selector dialog will close. This selects the `default` spec of version `1.0.0` of the project `cyclecloud-thinlinc`.
+
+* Under the *Thinlinc* section, for `Enable Web Interface` choose to enable or disable ThinLinc web interface access (default is disabled), we recommend to enable it. Once selected, input your web interface port number in the `Web Port` field (default is 443). 
+
+  *Note: Please ensure your network security or firewall rules allow inbound access on this port.*
+
+* In the `Connection Mode` dropdown, select the mode for the client connect from, the three options are:
+  **Public IP**: Connect trhough a public IP address.
+  **Private IP**: Connect through a VPN with direct connectivity to the Cluster.
+  **SSH Tunnel**: Connect through a bastion host. 
+
+  ![Browse Specs](images/advanced-settings.png)
+
+* Save the cluster and start it. When the master node turns green, connet to it using Thinlinc client to verify that it is  configured correctly.
